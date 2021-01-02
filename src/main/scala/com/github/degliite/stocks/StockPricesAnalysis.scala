@@ -20,7 +20,10 @@ object StockPricesAnalysis extends App{
     .withColumn("average_return_rounded", expr("ROUND(average_return, 2)"))
     .orderBy(col("date"))
 
+  //Creating a view for SQL
   df.createOrReplaceTempView("stocks_view")
+
+  //Using SQL to get the top sold stocks
   val topStocks = session.sql("SELECT ticker, SUM(close * volume) AS top_stocks " +
     "FROM stocks_view " +
     "GROUP BY ticker " +
@@ -28,7 +31,6 @@ object StockPricesAnalysis extends App{
 
 
   // Showing the result of the most traded stock in 2 ways:
-
   println(s"The most traded stock was ${topStocks.select(col("ticker")).first()} " +
     s"with volume ${topStocks.select(col("top_stocks")).first()}.")
 
