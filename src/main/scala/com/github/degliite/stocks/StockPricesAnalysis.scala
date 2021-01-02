@@ -24,19 +24,16 @@ object StockPricesAnalysis extends App{
   val topStocks = session.sql("SELECT ticker, SUM(close * volume) AS top_stocks " +
     "FROM stocks_view " +
     "GROUP BY ticker " +
-    "ORDER BY top_stocks "+
-  "LIMIT 1")
+    "ORDER BY top_stocks ")
+
+
+  // Showing the result of the most traded stock in 2 ways:
 
   println(s"The most traded stock was ${topStocks.select(col("ticker")).first()} " +
     s"with volume ${topStocks.select(col("top_stocks")).first()}.")
 
+  println("The most traded stock was:")
+  topStocks.show(1)
 
-//  //lets make a column indicated total spent so Quantity * UnitPrice
-//  val df2 = df.withColumn("Total", expr("ROUND(Quantity * UnitPrice, 2)"))
-//  df2.show(10)
-//  val topPurchases = df2.sort(desc("Total"))
-//  topPurchases.show(10)
-//  val returns = topPurchases.sort("Total").where(expr("Total < 0"))
-//  println(returns.count)
 
 }
