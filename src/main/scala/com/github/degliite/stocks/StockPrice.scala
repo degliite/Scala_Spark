@@ -6,17 +6,16 @@ import org.apache.spark.sql.functions.{avg, col, expr}
 
 object StockPrice extends App{
 
-  //Loading csv file
+  /**Loads csv file and creates DataFrame*/
   val session = SparkSession.builder().appName("StockPrices").master("local").getOrCreate()
   val fPath = "./src/main/resources/stock_prices.csv"
-
   val df = session.read
     .format("csv")
     .option("inferSchema", "true")
     .option("header", "true")
     .load(fPath)
 
-  //Calculating average return based on "close" price
+  /** Calculates avg return based on "close" price */
   val dailyReturn = df
     .groupBy(col("date"))
     .agg(avg("close").alias("average_return"))
@@ -24,7 +23,7 @@ object StockPrice extends App{
     .select("date","average_return_rounded")
     .orderBy(col("date"))
 
-  // Saving avg daily returns in .CSV in a single report
+  /** Saves avg daily returns in .CSV in a single report */
   DariaWriters.writeSingleFile(
     df = dailyReturn,
     format = "csv",
@@ -33,7 +32,7 @@ object StockPrice extends App{
     filename = "./src/main/resources/dailyReturnCSV.csv"
   )
 
-// Saving avg daily returns in .Parquet in a single report
+  /** Saves avg daily returns in .Parquet in a single report */
   DariaWriters.writeSingleFile(
     df = dailyReturn,
     format = "parquet",
